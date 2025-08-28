@@ -58,3 +58,13 @@ CREATE TABLE utilisateur (
 )
 INSERT INTO utilisateur (`role`) VALUES ('CUISINIER');
 INSERT INTO utilisateur (nom, email, motDePasse, `role`) VALUES ('dev1', 'bastien5967@gmail.com', 'test59300', 'GESTIONNAIRE');
+--
+ALTER TABLE ingredientmenu ADD FOREIGN KEY (Menu) REFERENCES menu(id)
+ALTER TABLE ingredientmenu ADD FOREIGN KEY (produit) REFERENCES produit(id)
+INSERT INTO ingredientmenu (`Menu`, `produit`, `quantiteUtilisee`, `unite`) VALUES (2, 1, 4, "Kg"); -- tester si les contraintes ne font pas tout planter
+--
+ALTER TABLE rapportmenu ADD FOREIGN KEY (Menu) REFERENCES menu(id)
+ALTER TABLE rapportmenu ADD FOREIGN KEY (rapport) REFERENCES rapport(id)
+INSERT INTO rapport (dateDebut, dateFin, coutMoyenRepas, menusInclus) VALUES (now(), now(), 4.99, "1,2");
+INSERT INTO rapportmenu (`Menu`, `rapport`, `commentaire`) VALUES (2, 2, "commentaire 2"); -- tester si les contraintes ne font pas tout planter
+--
