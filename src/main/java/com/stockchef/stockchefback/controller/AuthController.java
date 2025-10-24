@@ -21,13 +21,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> credentials) {
+        String nom = credentials.get("nom");
         String email = credentials.get("email");
         String password = credentials.get("password");
 
         try {
-            String role = userService.getUserRole(email, password);
-            if (role != null) {
-                User user = userService.getUserByEmail(email);
+			String role = "";
+			if (nom != null && nom != "") {
+				role = userService.getUserRole(nom, password);
+			}
+			else if (email != null && email != "") {
+				role = userService.getUserRoleEmail(email, password);
+			}
+            if (role != "") {
+                User user = userService.getUserByNom(nom);
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", true);
                 response.put("role", role);
@@ -42,16 +49,16 @@ public class AuthController {
 
     @GetMapping("/check-permission")
     public ResponseEntity<Map<String, Boolean>> checkPermission(
-            @RequestParam String email,
+            @RequestParam String nom,
             @RequestParam String requiredRole) {
-        boolean hasPermission = userService.hasPermission(email, requiredRole);
+        boolean hasPermission = userService.hasPermission(nom, requiredRole);
         return ResponseEntity.ok(Map.of("hasPermission", hasPermission));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<User> getUserInfo(@RequestParam String email) {
+    public ResponseEntity<User> getUserInfo(@RequestParam String nom) {
         try {
-            User user = userService.getUserByEmail(email);
+            User user = userService.getUserByNom(nom);
             if (user != null) {
                 return ResponseEntity.ok(user);
             }

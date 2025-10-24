@@ -56,6 +56,9 @@ public class ManageSQL {
                     results.add(row);
                 }
             }
+			catch (SQLException e) {
+				System.out.println("Error: " + e.getMessage());
+			}
         }
         
         return results;
@@ -80,6 +83,10 @@ public class ManageSQL {
             
             return statement.executeUpdate();
         }
+		catch (SQLException e) {
+			System.out.println("Error: " + e.getMessage());
+			return 0;
+		}
     }
 
     /**
@@ -113,6 +120,10 @@ public class ManageSQL {
             result.put("affectedRows", affectedRows);
             return result;
         }
+		catch (SQLException e) {
+			System.out.println("Error: " + e.getMessage());
+			return null;
+		}
     }
 
     /**
@@ -136,5 +147,9 @@ public class ManageSQL {
             connection.commit();
             return results;
         }
+		catch (SQLException e) {
+			System.out.println("Error: " + e.getMessage());
+			return null;
+		}
     }
 }

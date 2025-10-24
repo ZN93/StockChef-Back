@@ -45,6 +45,7 @@ public class ProduitService {
         List<Map<String, Object>> results = manageSQL.executeSelectSql(query, id);
         
         if (results.isEmpty()) {
+            System.out.println("Aucun produit trouvé pour l'ID : " + id);
             return null;
         }
         
@@ -59,6 +60,39 @@ public class ProduitService {
         produit.setDatePeremption((LocalDateTime) row.get("datePeremption"));
         
         return produit;
+    }
+    
+    public List<Produit> getProduitByPeremption(LocalDateTime datePeremption) throws SQLException {
+        return getProduitByPeremption(datePeremption, true);
+    }
+    
+    public List<Produit> getProduitByPeremption(LocalDateTime datePeremption, boolean AvantPeremption) throws SQLException {
+        String query;
+        if (AvantPeremption) {
+            query = "SELECT * FROM produit WHERE datePeremption <= ?";
+        } else {
+            query = "SELECT * FROM produit WHERE datePeremption >= ?";
+        }
+        List<Map<String, Object>> results = manageSQL.executeSelectSql(query, datePeremption);
+        
+        if (results.isEmpty()) {
+            System.out.println("Aucun produit trouvé pour la date de péremption : " + datePeremption);
+            return null;
+        }
+        
+        List<Produit> produits = new ArrayList<>();
+        for (Map<String, Object> row : results) {
+            Produit produit = new Produit();
+            produit.setId(((Number) row.get("id")).longValue());
+            produit.setNom((String) row.get("nom"));
+            produit.setQuantite(((Number) row.get("quantite")).floatValue());
+            produit.setUnite((String) row.get("unite"));
+            produit.setPrixUnitaire(new BigDecimal(row.get("prixUnitaire").toString()));
+            produit.setDateEntree((LocalDateTime) row.get("dateEntree"));
+            produit.setDatePeremption((LocalDateTime) row.get("datePeremption"));
+            produits.add(produit);
+        }
+        return produits;
     }
 
     public Produit createProduit(Produit produit) throws SQLException {

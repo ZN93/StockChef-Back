@@ -70,8 +70,8 @@ INSERT INTO rapportmenu (Menu, rapport, commentaire) VALUES (2, 1, "test 2");
 --.
 CREATE TABLE utilisateur (
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
-  nom VARCHAR(64) NOT NULL DEFAULT 'unknown',
-  email VARCHAR(128) NOT NULL DEFAULT 'unknown',
+  nom VARCHAR(64) NOT NULL DEFAULT 'unknown' UNIQUE,
+  email VARCHAR(128) NOT NULL DEFAULT 'unknown' UNIQUE,
   motDePasse VARCHAR(255) NOT NULL DEFAULT 'unknown',
   `role` ENUM('CUISINIER', 'GESTIONNAIRE', 'MANAGER', 'ADMINISTRATEUR') -- en faire une liste pas un varchar
 )
