@@ -14,6 +14,7 @@ public class Menu {
     private List<String> ingredients;
     private BigDecimal coutTotal;
 	private LocalDateTime dateMenu;
+	private LocalDateTime sys_datesup;
 	
 	public Object getDateMenu() {
 		return this.dateMenu;
@@ -28,5 +29,8 @@ public class Menu {
 	public void setIngredients(String ingredients) {
 		String[] list = ingredients.split(",");
 		this.ingredients = Arrays.asList(list);
+	}
+    public void setSys_datesup(LocalDateTime sys_datesup) {
+		this.sys_datesup = sys_datesup;
 	}
 }

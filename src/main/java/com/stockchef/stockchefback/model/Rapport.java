@@ -13,6 +13,7 @@ public class Rapport {
     private BigDecimal coutMoyenRepas;
     private String menusInclus;
     private Long utilisateur;
+    private LocalDateTime sys_datesup;
     
     public Object getDateDebut() {
         return this.dateDebut;
@@ -55,5 +56,11 @@ public class Rapport {
     }
     public void setUtilisateur(Long utilisateur) {
         this.utilisateur = utilisateur;
+    }
+    public Object getSys_datesup() {
+        return this.sys_datesup;
+    }
+    public void setSys_datesup(LocalDateTime sys_datesup) {
+        this.sys_datesup = sys_datesup;
     }
 }

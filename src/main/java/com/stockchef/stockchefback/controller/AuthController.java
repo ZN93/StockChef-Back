@@ -67,4 +67,41 @@ public class AuthController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    /* BONUS: un moyen de réinitialiser le mot de passe, non demandé, demande trop de setup donc avorté
+    @GetMapping("/{id}/reset/{token}")
+    public ResponseEntity<Map<String, Object>> resetUserPassword(@PathVariable Long id, @PathVariable String token, @RequestParam String password) {
+        try {
+            User user = userService.getUserById(id);
+            if (user != null) {
+                if (token.equals(user.getToken())) {
+                    user.setToken(null);
+                    userService.setToken(user, null);
+                    userService.updateUserPassword(id, password);
+                    return ResponseEntity.ok(Map.of("success", true, "message", "Password reset successfully"));
+                } else {
+                    return ResponseEntity.status(401).body(Map.of("success", false, "message", "Invalid token"));
+                }
+            } else {
+                return ResponseEntity.status(401).body(Map.of("success", false, "message", "User not found"));
+            }
+        } catch (SQLException e) {
+            return ResponseEntity.internalServerError().body(Map.of("success", false, "message", "Database error"));
+        }
+    }
+    @GetMapping("/{id}/send-reset-token")
+    public ResponseEntity<Map<String, Object>> sendResetToken(@PathVariable Long id) {
+        try {
+            User user = userService.getUserById(id);
+            if (user != null) {
+                String token = userService.generateToken(id);
+                userService.setToken(user, token);
+                return ResponseEntity.ok(Map.of("success", true, "message", "Reset token sent successfully"));
+            } else {
+                return ResponseEntity.status(401).body(Map.of("success", false, "message", "User not found"));
+            }
+        } catch (SQLException e) {
+            return ResponseEntity.internalServerError().body(Map.of("success", false, "message", "Database error"));
+        }
+    }
+    // */
 }

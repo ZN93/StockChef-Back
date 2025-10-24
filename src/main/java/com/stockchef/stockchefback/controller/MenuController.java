@@ -101,4 +101,57 @@ public class MenuController {
 			return ResponseEntity.internalServerError().build();
 		}
 	}
+	
+	@GetMapping("/admin/{id_utilisateur}")
+	public ResponseEntity<List<Menu>> getMenuTrash(@PathVariable Long id_utilisateur) {
+		try {
+			List<Menu> menu = menuService.getAllMenusTrash(id_utilisateur);
+			if (menu != null) {
+				return ResponseEntity.ok(menu);
+			}
+			return ResponseEntity.notFound().build();
+		} catch (SQLException e) {
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+	
+	@GetMapping("/admin/{id_utilisateur}/{id}")
+	public ResponseEntity<Menu> getMenuTrashById(@PathVariable Long id_utilisateur, @PathVariable Long id) {
+		try {
+			Menu menu = menuService.getMenuTrashById(id, id_utilisateur);
+			if (menu != null) {
+				return ResponseEntity.ok(menu);
+			}
+			return ResponseEntity.notFound().build();
+		} catch (SQLException e) {
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+    
+    @PostMapping("/admin/{id_utilisateur}/retablire/{id}")
+    public ResponseEntity<Void> retablireProduit(@PathVariable Long id_utilisateur, @PathVariable Long id) {
+        try {
+            boolean retablire = menuService.retablireMenu(id_utilisateur, id);
+            if (retablire) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.notFound().build();
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    @PostMapping("/admin/{id_utilisateur}/delete/{id}")
+    public ResponseEntity<Void> DeleteProduitDefinitivement(@PathVariable Long id_utilisateur, @PathVariable Long id) {
+        try {
+            boolean retablire = menuService.DeleteMenuDefinitivement(id_utilisateur, id);
+            if (retablire) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.notFound().build();
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

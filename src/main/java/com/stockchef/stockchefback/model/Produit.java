@@ -14,4 +14,5 @@ public class Produit {
     private BigDecimal prixUnitaire;
     private LocalDateTime dateEntree;
     private LocalDateTime datePeremption;
+    private LocalDateTime sys_datesup;
 }

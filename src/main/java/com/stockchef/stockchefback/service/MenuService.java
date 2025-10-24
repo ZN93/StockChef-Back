@@ -39,8 +39,82 @@ public class MenuService {
         return menus;
     }
 
+    public List<Menu> getAllMenusTrash(Long id_utilisateur) throws SQLException {
+		if (id_utilisateur == null) {
+			return null;
+		}
+		// vérifier les permissions de l'utilisateur
+		String sql = "SELECT * FROM utilisateur WHERE id = ?";
+		List<Map<String, Object>> retour = manageSQL.executeSelectSql(sql, id_utilisateur);
+		
+		if (retour.isEmpty()) {
+			return null;
+		}
+		
+		String role = (String) retour.get(0).get("role");
+		if (!role.equals("ADMINISTRATEUR") || !role.equals("MANAGER")) {
+			return null;
+		}
+		
+        String query = "SELECT * FROM menu";
+        List<Map<String, Object>> results = manageSQL.executeSelectSql(query);
+        
+        if (results.isEmpty()) {
+            return null;
+        }
+        
+        List<Menu> menus = new ArrayList<>();
+        for (Map<String, Object> row : results) {
+            Menu menu = new Menu();
+            menu.setId(((Number) row.get("id")).longValue());
+            menu.setNom((String) row.get("nom"));
+            menu.setDateMenu((LocalDateTime) row.get("dateMenu"));
+            menu.setIngredients((String) row.get("ingredients"));
+            menu.setCoutTotal(new BigDecimal(row.get("coutTotal").toString()));
+            menu.setSys_datesup((LocalDateTime) row.get("sys_datesup"));
+            menus.add(menu);
+        }
+        return menus;
+    }
+
     public Menu getMenuById(Long id) throws SQLException {
         String query = "SELECT * FROM menu WHERE id = ? AND sys_datesup IS NULL";
+        List<Map<String, Object>> results = manageSQL.executeSelectSql(query, id);
+        
+        if (results.isEmpty()) {
+            System.out.println("Aucun menu trouvé pour l'ID : " + id);
+            return null;
+        }
+        
+        Map<String, Object> row = results.get(0);
+        Menu menu = new Menu();
+        menu.setId(((Number) row.get("id")).longValue());
+        menu.setNom((String) row.get("nom"));
+        menu.setDateMenu((LocalDateTime) row.get("dateMenu"));
+        menu.setIngredients((String) row.get("ingredients"));
+        menu.setCoutTotal(new BigDecimal(row.get("coutTotal").toString()));
+        
+        return menu;
+    }
+	
+    public Menu getMenuTrashById(Long id, Long id_utilisateur) throws SQLException {
+		if (id_utilisateur == null) {
+			return null;
+		}
+		// vérifier les permissions de l'utilisateur
+		String sql = "SELECT * FROM utilisateur WHERE id = ?";
+		List<Map<String, Object>> retour = manageSQL.executeSelectSql(sql, id_utilisateur);
+		
+		if (retour.isEmpty()) {
+			return null;
+		}
+		
+		String role = (String) retour.get(0).get("role");
+		if (!role.equals("ADMINISTRATEUR") || !role.equals("MANAGER")) {
+			return null;
+		}
+		
+        String query = "SELECT * FROM menu WHERE id = ?";
         List<Map<String, Object>> results = manageSQL.executeSelectSql(query, id);
         
         if (results.isEmpty()) {
@@ -147,5 +221,47 @@ public class MenuService {
 			menus.add(menu);
 		}
 		return menus;
+	}
+	
+	public boolean retablireMenu(Long id, Long id_utilisateur) throws SQLException {
+		if (id_utilisateur == null) {
+			return false;
+		}
+		// vérifier les permissions de l'utilisateur
+		String sql = "SELECT * FROM utilisateur WHERE id = ?";
+		List<Map<String, Object>> retour = manageSQL.executeSelectSql(sql, id_utilisateur);
+		
+		if (retour.isEmpty()) {
+			return false;
+		}
+		
+		String role = (String) retour.get(0).get("role");
+		if (!role.equals("ADMINISTRATEUR") || !role.equals("MANAGER")) {
+			return false;
+		}
+		String query = "UPDATE menu SET sys_datesup=null WHERE id = ? AND sys_datesup IS NOT NULL";
+		int rowsAffected = manageSQL.executeUpdateSql(query, id);
+		return rowsAffected > 0;
+	}
+	
+	public boolean DeleteMenuDefinitivement(Long id, Long id_utilisateur) throws SQLException {
+		if (id_utilisateur == null) {
+			return false;
+		}
+		// vérifier les permissions de l'utilisateur
+		String sql = "SELECT * FROM utilisateur WHERE id = ?";
+		List<Map<String, Object>> retour = manageSQL.executeSelectSql(sql, id_utilisateur);
+		
+		if (retour.isEmpty()) {
+			return false;
+		}
+		
+		String role = (String) retour.get(0).get("role");
+		if (!role.equals("ADMINISTRATEUR") || !role.equals("MANAGER")) {
+			return false;
+		}
+		String query = "DELETE FROM menu WHERE id = ?";
+		int rowsAffected = manageSQL.executeUpdateSql(query, id);
+		return rowsAffected > 0;
 	}
 }
