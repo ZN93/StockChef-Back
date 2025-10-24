@@ -55,6 +55,26 @@ public class MenuController {
 			return ResponseEntity.internalServerError().build();
 		}
 	}
+	
+	@GetMapping("/search/{name}")
+	public ResponseEntity<List<Menu>> searchMenusByName(@PathVariable String name) {
+		try {
+			List<Menu> menus = menuService.searchMenusByName(name);
+			return ResponseEntity.ok(menus);
+		} catch (SQLException e) {
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+
+	@GetMapping("/trash/search/{name}")
+	public ResponseEntity<List<Menu>> searchMenusByNameTrash(@PathVariable String name) {
+		try {
+			List<Menu> menus = menuService.searchMenusByNameTrash(name);
+			return ResponseEntity.ok(menus);
+		} catch (SQLException e) {
+			return ResponseEntity.internalServerError().build();
+		}
+	}
 
 	@PostMapping
 	public ResponseEntity<Menu> createMenu(@RequestBody Menu menu) {

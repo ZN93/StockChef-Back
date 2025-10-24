@@ -22,7 +22,7 @@ public class ProduitService {
     }
 
     public List<Produit> getAllProduits() throws SQLException {
-        String query = "SELECT * FROM produit";
+        String query = "SELECT * FROM produit WHERE sys_datesup IS NULL";
         List<Map<String, Object>> results = manageSQL.executeSelectSql(query);
         
         List<Produit> produits = new ArrayList<>();
@@ -41,7 +41,7 @@ public class ProduitService {
     }
 
     public Produit getProduitById(Long id) throws SQLException {
-        String query = "SELECT * FROM produit WHERE id = ?";
+        String query = "SELECT * FROM produit WHERE id = ? AND sys_datesup IS NULL";
         List<Map<String, Object>> results = manageSQL.executeSelectSql(query, id);
         
         if (results.isEmpty()) {
@@ -69,9 +69,9 @@ public class ProduitService {
     public List<Produit> getProduitByPeremption(LocalDateTime datePeremption, boolean AvantPeremption) throws SQLException {
         String query;
         if (AvantPeremption) {
-            query = "SELECT * FROM produit WHERE datePeremption <= ?";
+            query = "SELECT * FROM produit WHERE datePeremption <= ? AND sys_datesup IS NULL";
         } else {
-            query = "SELECT * FROM produit WHERE datePeremption >= ?";
+            query = "SELECT * FROM produit WHERE datePeremption >= ? AND sys_datesup IS NULL";
         }
         List<Map<String, Object>> results = manageSQL.executeSelectSql(query, datePeremption);
         
@@ -117,8 +117,57 @@ public class ProduitService {
     }
 
     public boolean deleteProduit(Long id) throws SQLException {
-        String query = "DELETE FROM produit WHERE id = ?";
+        String query = "UPDATE produit SET sys_datesup=now() WHERE id = ? AND sys_datesup IS NULL";
+        // String query = "DELETE FROM produit WHERE id = ?";
         int rowsAffected = manageSQL.executeUpdateSql(query, id);
         return rowsAffected > 0;
+    }
+
+	public List<Produit> searchProduitsByName(String name) throws SQLException {
+        String query = "SELECT * FROM produit WHERE LOWER(nom) LIKE LOWER(?) AND sys_datesup IS NULL";
+        List<Map<String, Object>> results = manageSQL.executeSelectSql(query, "%" + name + "%");
+        
+        if (results.isEmpty()) {
+            System.out.println("Aucun produit trouvé pour le nom : " + name);
+            return null;
+        }
+        
+        List<Produit> produits = new ArrayList<>();
+        for (Map<String, Object> row : results) {
+            Produit produit = new Produit();
+            produit.setId(((Number) row.get("id")).longValue());
+            produit.setNom((String) row.get("nom"));
+            produit.setQuantite(((Number) row.get("quantite")).floatValue());
+            produit.setUnite((String) row.get("unite"));
+            produit.setPrixUnitaire(new BigDecimal(row.get("prixUnitaire").toString()));
+            produit.setDateEntree((LocalDateTime) row.get("dateEntree"));
+            produit.setDatePeremption((LocalDateTime) row.get("datePeremption"));
+            produits.add(produit);
+        }
+        return produits;
+    }
+
+    public List<Produit> searchProduitsByNameTrash(String name) throws SQLException {
+        String query = "SELECT * FROM produit WHERE LOWER(nom) LIKE LOWER(?) AND sys_datesup IS NOT NULL";
+        List<Map<String, Object>> results = manageSQL.executeSelectSql(query, "%" + name + "%");
+        
+        if (results.isEmpty()) {
+            System.out.println("Aucun produit trouvé pour le nom : " + name);
+            return null;
+        }
+        
+        List<Produit> produits = new ArrayList<>();
+        for (Map<String, Object> row : results) {
+            Produit produit = new Produit();
+            produit.setId(((Number) row.get("id")).longValue());
+            produit.setNom((String) row.get("nom"));
+            produit.setQuantite(((Number) row.get("quantite")).floatValue());
+            produit.setUnite((String) row.get("unite"));
+            produit.setPrixUnitaire(new BigDecimal(row.get("prixUnitaire").toString()));
+            produit.setDateEntree((LocalDateTime) row.get("dateEntree"));
+            produit.setDatePeremption((LocalDateTime) row.get("datePeremption"));
+            produits.add(produit);
+        }
+        return produits;
     }
 }

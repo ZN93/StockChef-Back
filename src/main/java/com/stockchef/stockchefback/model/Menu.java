@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Data
@@ -12,16 +13,20 @@ public class Menu {
     private String nom;
     private List<String> ingredients;
     private BigDecimal coutTotal;
+	private LocalDateTime dateMenu;
+	
 	public Object getDateMenu() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'getDateMenu'");
+		return this.dateMenu;
 	}
-    public void setDateMenu(LocalDateTime localDateTime) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setDateMenu'");
+    public void setDateMenu(LocalDateTime dateMenu) {
+        if (dateMenu == null) {
+            this.dateMenu = LocalDateTime.now();
+        } else {
+            this.dateMenu = dateMenu;
+        }
     }
-	public void setIngredients(String string) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'setIngredients'");
+	public void setIngredients(String ingredients) {
+		String[] list = ingredients.split(",");
+		this.ingredients = Arrays.asList(list);
 	}
 }

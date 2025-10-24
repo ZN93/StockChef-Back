@@ -19,7 +19,7 @@ public class MenuService {
     private ManageSQL manageSQL;
 
     public List<Menu> getAllMenus() throws SQLException {
-        String query = "SELECT * FROM menu";
+        String query = "SELECT * FROM menu WHERE sys_datesup IS NULL";
         List<Map<String, Object>> results = manageSQL.executeSelectSql(query);
         
         if (results.isEmpty()) {
@@ -40,7 +40,7 @@ public class MenuService {
     }
 
     public Menu getMenuById(Long id) throws SQLException {
-        String query = "SELECT * FROM menu WHERE id = ?";
+        String query = "SELECT * FROM menu WHERE id = ? AND sys_datesup IS NULL";
         List<Map<String, Object>> results = manageSQL.executeSelectSql(query, id);
         
         if (results.isEmpty()) {
@@ -60,7 +60,7 @@ public class MenuService {
     }
 	
 	public List<Produit> getIngredientsByMenu(Long id) throws SQLException {
-		String query = "SELECT * FROM ingredientmenu WHERE menu = ?";
+		String query = "SELECT * FROM ingredientmenu WHERE menu = ? AND sys_datesup IS NULL";
 		List<Map<String, Object>> results = manageSQL.executeSelectSql(query, id);
 		
 		if (results.isEmpty()) {
@@ -100,8 +100,52 @@ public class MenuService {
 	}
 
 	public boolean deleteMenu(Long id) throws SQLException {
-		String query = "DELETE FROM menu WHERE id = ?";
+		String query = "UPDATE menu SET sys_datesup=now() WHERE id = ? AND sys_datesup IS NULL";
 		int rowsAffected = manageSQL.executeUpdateSql(query, id);
 		return rowsAffected > 0;
+	}
+
+	public List<Menu> searchMenusByName(String name) throws SQLException {
+		String query = "SELECT * FROM menu WHERE LOWER(nom) LIKE LOWER(?) AND sys_datesup IS NULL";
+		List<Map<String, Object>> results = manageSQL.executeSelectSql(query, "%" + name + "%");
+		
+		if (results.isEmpty()) {
+			System.out.println("Aucun menu trouvé pour le nom : " + name);
+			return null;
+		}
+		
+		List<Menu> menus = new ArrayList<>();
+		for (Map<String, Object> row : results) {
+			Menu menu = new Menu();
+			menu.setId(((Number) row.get("id")).longValue());
+			menu.setNom((String) row.get("nom"));
+			menu.setDateMenu((LocalDateTime) row.get("dateMenu"));
+			menu.setIngredients((String) row.get("ingredients"));
+			menu.setCoutTotal(new BigDecimal(row.get("coutTotal").toString()));
+			menus.add(menu);
+		}
+		return menus;
+	}
+
+	public List<Menu> searchMenusByNameTrash(String name) throws SQLException {
+		String query = "SELECT * FROM menu WHERE LOWER(nom) LIKE LOWER(?) AND sys_datesup IS NOT NULL";
+		List<Map<String, Object>> results = manageSQL.executeSelectSql(query, "%" + name + "%");
+		
+		if (results.isEmpty()) {
+			System.out.println("Aucun menu trouvé pour le nom : " + name);
+			return null;
+		}
+		
+		List<Menu> menus = new ArrayList<>();
+		for (Map<String, Object> row : results) {
+			Menu menu = new Menu();
+			menu.setId(((Number) row.get("id")).longValue());
+			menu.setNom((String) row.get("nom"));
+			menu.setDateMenu((LocalDateTime) row.get("dateMenu"));
+			menu.setIngredients((String) row.get("ingredients"));
+			menu.setCoutTotal(new BigDecimal(row.get("coutTotal").toString()));
+			menus.add(menu);
+		}
+		return menus;
 	}
 }

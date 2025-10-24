@@ -2,7 +2,7 @@ package com.stockchef.stockchefback.controller;
 
 import com.stockchef.stockchefback.model.Produit;
 import com.stockchef.stockchefback.service.ProduitService;
-import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +25,33 @@ public class ProduitController {
             List<Produit> produits = produitService.getAllProduits();
             return ResponseEntity.ok(produits);
         } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
 
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<Produit>> searchProduitsByName(@PathVariable String name) {
+        try {
+            List<Produit> produits = produitService.searchProduitsByName(name);
+            return ResponseEntity.ok(produits);
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    @GetMapping("/trash/search/{name}")
+    public ResponseEntity<List<Produit>> searchProduitsByNameTrash(@PathVariable String name) {
+        try {
+            List<Produit> produits = produitService.searchProduitsByNameTrash(name);
+            return ResponseEntity.ok(produits);
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
     @GetMapping("/{id}")
     public ResponseEntity<Produit> getProduitById(@PathVariable Long id) {
         try {
@@ -38,6 +61,7 @@ public class ProduitController {
             }
             return ResponseEntity.notFound().build();
         } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -51,6 +75,7 @@ public class ProduitController {
             }
             return ResponseEntity.badRequest().build();
         } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -64,6 +89,7 @@ public class ProduitController {
             }
             return ResponseEntity.notFound().build();
         } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }

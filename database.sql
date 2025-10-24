@@ -9,7 +9,8 @@ CREATE TABLE `produit` (
   unite VARCHAR(100) NOT NULL DEFAULT 'unknown',
   prixUnitaire FLOAT(5,2) NOT NULL DEFAULT 0, -- max 999,99
   dateEntree DATETIME NOT NULL DEFAULT now(),
-  datePeremption DATETIME NULL DEFAULT NULL
+  datePeremption DATETIME NULL DEFAULT NULL,
+  sys_datesup DATETIME NULL DEFAULT NULL
 );
 -- pour avoir des valeurs dans les tables
 INSERT INTO produit (nom, quantite, unite, prixUnitaire) VALUES ("test 1", 1.001, 1, 1.01);
@@ -22,7 +23,8 @@ CREATE TABLE menu (
   nom VARCHAR(255) NOT NULL DEFAULT 'unknown',
   dateMenu DATETIME NULL DEFAULT NULL,
   ingredients VARCHAR(512) NULL DEFAULT NULL COMMENT "à gérer par une fonction particulière: la virgule sépart les ID de la liste",
-  coutTotal FLOAT(8,2) NOT NULL DEFAULT 0; -- max 999 999,99
+  coutTotal FLOAT(8,2) NOT NULL DEFAULT 0, -- max 999 999,99
+  sys_datesup DATETIME NULL DEFAULT NULL
 );
 -- pour avoir des valeurs dans les tables
 INSERT INTO Menu (nom, coutTotal) VALUES ("test 1", 0);
@@ -35,7 +37,8 @@ CREATE TABLE ingredientmenu (
   Menu BIGINT NOT NULL COMMENT 'ID du menu associé',
   produit BIGINT NOT NULL COMMENT 'ID du produit associé',
   quantiteUtilisee FLOAT(12,3) NOT NULL DEFAULT 0, -- max 999 999,999
-  unite VARCHAR(100) NOT NULL DEFAULT 'unknown'
+  unite VARCHAR(100) NOT NULL DEFAULT 'unknown',
+  sys_datesup DATETIME NULL DEFAULT NULL
 );
 -- pour avoir des valeurs dans les tables
 INSERT INTO IngredientMenu (Menu, produit) VALUES (1, 1);
@@ -49,7 +52,8 @@ CREATE TABLE rapport (
   dateFin DATETIME NOT NULL DEFAULT now(),
   coutMoyenRepas FLOAT(5,2) NOT NULL DEFAULT 0, -- max 999,99;
   menusInclus VARCHAR(512) NULL DEFAULT NULL COMMENT "à gérer par une fonction particulière: la virgule sépart les ID de la liste",
-  utilisateur BIGINT NULL DEFAULT NULL
+  utilisateur BIGINT NULL DEFAULT NULL,
+  sys_datesup DATETIME NULL DEFAULT NULL
 );
 -- pour avoir des valeurs dans les tables
 INSERT INTO rapport (dateDebut, dateFin, coutMoyenRepas, menusInclus) VALUES ('2025-08-29 10:34:07', '2025-08-29 10:35:12', 5.18, "1,2,3");
@@ -60,7 +64,8 @@ CREATE TABLE rapportmenu(
   `id` BIGINT AUTO_INCREMENT PRIMARY KEY,
   rapport BIGINT NOT NULL COMMENT 'ID du rapport associé',
   Menu BIGINT NOT NULL COMMENT 'ID du menu associé',
-  commentaire VARCHAR(255) NULL DEFAULT NULL COMMENT 'colonne supplémentaire si besoin'
+  commentaire VARCHAR(255) NULL DEFAULT NULL COMMENT 'colonne supplémentaire si besoin',
+  sys_datesup DATETIME NULL DEFAULT NULL
 );
 -- pour avoir des valeurs dans les tables
 INSERT INTO rapportmenu (Menu, rapport) VALUES (1, 1);
@@ -73,7 +78,8 @@ CREATE TABLE utilisateur (
   nom VARCHAR(64) NOT NULL DEFAULT 'unknown' UNIQUE,
   email VARCHAR(128) NOT NULL DEFAULT 'unknown' UNIQUE,
   motDePasse VARCHAR(255) NOT NULL DEFAULT 'unknown',
-  `role` ENUM('CUISINIER', 'GESTIONNAIRE', 'MANAGER', 'ADMINISTRATEUR') -- en faire une liste pas un varchar
+  `role` ENUM('CUISINIER', 'GESTIONNAIRE', 'MANAGER', 'ADMINISTRATEUR'), -- en faire une liste pas un varchar
+  sys_datesup DATETIME NULL DEFAULT NULL
 )
 -- pour avoir des valeurs dans les tables
 INSERT INTO utilisateur (`role`) VALUES ('CUISINIER');
