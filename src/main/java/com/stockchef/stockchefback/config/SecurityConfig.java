@@ -3,6 +3,7 @@ package com.stockchef.stockchefback.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,8 +39,10 @@ public class SecurityConfig {
         http
             // Désactiver CSRF pour les APIs REST
             .csrf(csrf -> csrf.disable())
-            
-            // Configurer l'autorisation des requests
+
+            .cors(Customizer.withDefaults())
+
+                // Configurer l'autorisation des requests
             .authorizeHttpRequests(authz -> authz
                 // Permettre l'accès sans authentification aux endpoints d'auth
                 .requestMatchers("/auth/**").permitAll()
